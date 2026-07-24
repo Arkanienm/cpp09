@@ -66,6 +66,53 @@ static void checkDate(std::string line)
 		if (!isdigit(line.at(i)))
 			throw WrongInputFile();
 	}
+	int month = atoi(line.substr(5, 2).c_str());
+	int day = atoi(line.substr(8, 2).c_str());
+	int year = atoi(line.substr(0, 4).c_str());
+	if (month > 12 || month <= 0 || day > 32 || day <= 0)
+		throw WrongInputFile();
+	if (month == 2)
+	{
+		if ((year % 4 == 0 && year %100 != 0) || (year % 400 == 0))
+		{
+			if (day > 29)
+				throw WrongInputFile();
+		}
+		else
+		{
+			if (day > 28)
+				throw WrongInputFile();
+		}
+	}
+	else if ((month % 2 != 0 && month <= 7) || (month % 2 == 0 && month >= 8))
+	{
+		if (day > 31)
+			throw WrongInputFile();
+	}
+	else
+	{
+		if (day > 30)
+		{
+			throw WrongInputFile();
+		}
+	}
+}
+
+static void checkValue(std::string line)
+{
+	size_t index = line.find('|') + 1;
+	size_t size = line.size() - index - 1;
+	if (size <= 0 || size > 4)
+		throw WrongInputFile();
+	for (size_t i = 13; i < line.size(); i++)
+	{
+		if (!isdigit(line.at(i)))
+			throw WrongInputFile();
+	}
+	int value = atoi(line.substr(13, size).c_str());
+	if (value > 1000 || value < 0)
+		throw WrongInputFile();
+	std::cout << "index = " << index << " size = " << size << " line size = " << line.size() << " value = " << value << std::endl;
 }
 
 void parsingInputFile(char **av)
@@ -88,13 +135,13 @@ void parsingInputFile(char **av)
 		}
 		else
 		{
-			if (line.find("|") == std::string::npos || line.size() < 10)
+			if (line.find("|") == std::string::npos || line.size() < 10 || line.at(11) != '|')
 				throw WrongInputFile();
-			if (line.at(4) != '-' || line.at(7) != '-')
+			if (line.at(4) != '-' || line.at(7) != '-' || line.at(10) != ' ' || line.at(12) != ' ')
 				throw WrongInputFile();
 			checkDate(line);
+			checkValue(line);
 		}
 		i++;
 	}
-	
 }
