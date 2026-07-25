@@ -6,8 +6,8 @@ int main(int ac, char **av)
 		return 0;
 	try
 	{
-		setMap();
-		parsingInputFile(av);
+		setMap(av);
+		
 	}
 	catch(const std::exception& e)
 	{

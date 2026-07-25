@@ -25,7 +25,6 @@ class WrongInputFile : public std::exception
 		virtual const char* what() const throw();
 };
 
-void setMap();
-void parsingInputFile(char **av);
+void setMap(char **av);
 
 #endif
