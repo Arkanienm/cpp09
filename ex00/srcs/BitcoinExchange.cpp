@@ -11,28 +11,36 @@ const char* NoFileCsvException::what() const throw()
 
 const char* NoInputFileException::what() const throw()
 {
-	return "Unable to open the input file .";
-}
-
-const char* WrongInputFile::what() const throw()
-{
-	return "The file has wrong input in .";
+	return "Error: could not open file.";
 }
 
 static int checkValue(std::string line)
 {
 	size_t index = line.find('|') + 1;
 	size_t size = line.size() - index - 1;
-	if (size <= 0 || size > 4)
-		return (0);
+	char* endptr;
+	int dot = 0;
+	if (line.at(13) == '-')
+	{
+		std::cout << "Error: not a positive number." << std::endl;
+		return(0);
+	}
 	for (size_t i = 13; i < line.size(); i++)
 	{
-		if (!isdigit(line.at(i)))
+		if (line.at(i) == '.')
+			dot++;
+		if ((!isdigit(line.at(i)) && line.at(i) != '.' )|| dot > 1)
+		{
+			std::cout << "Invalid number input." << std::endl;
 			return (0);
+		}
 	}
-	int value = atoi(line.substr(13, size).c_str());
+	float value = strtof(line.substr(index + 1, size).c_str(), &endptr);
 	if (value > 1000 || value < 0)
+	{
+		std::cout << "Error: too large a number." << std::endl;
 		return (0);
+	}
 	return (1);
 }
 
@@ -42,7 +50,7 @@ static int checkDate(std::string line)
 	{
 		if (!isdigit(line.at(i)))
 		{
-			std::cout << "Date is invalid ." << std::endl;
+			std::cout << "Error: bad input => " << line.substr(0, 10) << std::endl;
 			return (0);
 		}
 	}
@@ -50,7 +58,7 @@ static int checkDate(std::string line)
 	{
 		if (!isdigit(line.at(i)))
 		{
-			std::cout << "Date is invalid ." << std::endl;
+			std::cout << "Error: bad input => " << line.substr(0, 10) << std::endl;
 			return (0);
 		}
 	}
@@ -58,7 +66,7 @@ static int checkDate(std::string line)
 	{
 		if (!isdigit(line.at(i)))
 		{
-			std::cout << "Date is invalid ." << std::endl;
+			std::cout << "Error: bad input => " << line.substr(0, 10) << std::endl;
 			return (0);
 		}
 	}
@@ -67,7 +75,7 @@ static int checkDate(std::string line)
 	int year = atoi(line.substr(0, 4).c_str());
 	if (month > 12 || month <= 0 || day > 32 || day <= 0)
 	{
-		std::cout << "Date is invalid ." << std::endl;
+		std::cout << "Error: bad input => " << line.substr(0, 10) << std::endl;
 		return (0);
 	}
 	if (month == 2)
@@ -76,7 +84,7 @@ static int checkDate(std::string line)
 		{
 			if (day > 29)
 			{
-				std::cout << "Date is invalid ." << std::endl;
+				std::cout << "Error: bad input => " << line.substr(0, 10) << std::endl;
 				return (0);
 			}
 		}
@@ -84,7 +92,7 @@ static int checkDate(std::string line)
 		{
 			if (day > 28)
 			{
-				std::cout << "Date is invalid ." << std::endl;
+				std::cout << "Error: bad input => " << line.substr(0, 10) << std::endl;
 				return (0);
 			}
 		}
@@ -93,7 +101,7 @@ static int checkDate(std::string line)
 	{
 		if (day > 31)
 		{
-			std::cout << "Date is invalid ." << std::endl;
+			std::cout << "Error: bad input => " << line.substr(0, 10) << std::endl;
 			return (0);
 		}
 	}
@@ -101,11 +109,10 @@ static int checkDate(std::string line)
 	{
 		if (day > 30)
 		{
-			std::cout << "Date is invalid ." << std::endl;
+			std::cout << "Error: bad input => " << line.substr(0, 10) << std::endl;
 			return (0);
 		}
 	}
-	
 	return (1);
 }
 
@@ -122,7 +129,8 @@ static void calcul(std::string line, std::map<std::string, float> &myMap)
 	{
 		if (it->first == date)
 			dateFound = true;
-		it++;
+		else
+			it++;
 	}
 	if (!dateFound)
 	{
@@ -132,7 +140,7 @@ static void calcul(std::string line, std::map<std::string, float> &myMap)
 	}
 	size_t index = line.find('|') + 1;
 	size_t size = line.size() - index - 1;
-	float value = atoi(line.substr(13, size).c_str());
+	float value = atof(line.substr(13, size).c_str());
 	result = it->second * value;
 	std::cout << date << " => " << value  << " = " << result << std::endl;
 	i++;
@@ -149,10 +157,7 @@ int checkFile(std::string line, bool i)
 	if (!checkDate(line))
 		return (0);
 	if (!checkValue(line))
-	{
-		std::cout << "Value is invalid" << std::endl;
 		return (0);
-	}
 	else
 	{
 		if (line.find("|") == std::string::npos || line.size() < 10 || line.at(11) != '|')
@@ -188,7 +193,7 @@ void setMap(char **av)
 {
 	std::ifstream dataCsv("data.csv");
 	if (!dataCsv.is_open())
-		throw NoInputFileException();
+		throw NoFileCsvException();
 	std::string line;
 	std::string date;
 	std::string price;

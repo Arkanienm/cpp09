@@ -3,7 +3,10 @@
 int main(int ac, char **av)
 {
 	if (ac != 2 || !av[0])
+	{
+		std::cout << "Error: could not open file." << std::endl;
 		return 0;
+	}
 	try
 	{
 		setMap(av);

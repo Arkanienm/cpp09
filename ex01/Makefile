@@ -1,11 +1,11 @@
-NAME     = btc
+NAME     = RPN
 CXX      = c++
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
 SRCS_DIR = srcs/
 OBJ_DIR  = .obj/
 
-SRCS     = $(SRCS_DIR)main.cpp $(SRCS_DIR)BitcoinExchange.cpp
+SRCS     = $(SRCS_DIR)main.cpp $(SRCS_DIR)RPN.cpp
 
 OBJ     = $(SRCS:$(SRCS_DIR)%.cpp=$(OBJ_DIR)%.o)
 
