@@ -14,7 +14,44 @@ const char* NoInputFileException::what() const throw()
 	return "Error: could not open file.";
 }
 
-static int checkValue(std::string line)
+BitcoinExchange::BitcoinExchange()
+{}
+
+BitcoinExchange::~BitcoinExchange()
+{}
+BitcoinExchange& BitcoinExchange::operator=(BitcoinExchange& src)
+{
+	return *this;
+}
+
+BitcoinExchange::BitcoinExchange(BitcoinExchange& src)
+{
+	*this = src;
+}
+
+void BitcoinExchange::setMap(char **av)
+{
+	std::ifstream dataCsv("data.csv");
+	if (!dataCsv.is_open())
+		throw NoFileCsvException();
+	std::string line;
+	std::string date;
+	std::string price;
+	float fprice;
+	;
+	while (getline(dataCsv, line))
+	{
+		int i = 0;
+		i = line.find(',');
+		date = line.substr(0, i);
+		price = line.substr(i + 1, line.size());
+		fprice = atof(price.c_str());
+		myMap.insert(std::make_pair(date, fprice));
+	}
+	parsingInputFile(av, myMap);
+}
+
+int BitcoinExchange::checkValue(std::string line)
 {
 	size_t index = line.find('|') + 1;
 	size_t size = line.size() - index - 1;
@@ -44,7 +81,7 @@ static int checkValue(std::string line)
 	return (1);
 }
 
-static int checkDate(std::string line)
+int BitcoinExchange::checkDate(std::string line)
 {
 	for (int i = 0; i < 4; i++)
 	{
@@ -116,7 +153,7 @@ static int checkDate(std::string line)
 	return (1);
 }
 
-static void calcul(std::string line, std::map<std::string, float> &myMap)
+void BitcoinExchange::calcul(std::string line)
 {
 	std::string date;
 	std::map <std::string, float>::iterator it;
@@ -146,7 +183,7 @@ static void calcul(std::string line, std::map<std::string, float> &myMap)
 	i++;
 }
 
-int checkFile(std::string line, bool i)
+int BitcoinExchange::checkFile(std::string line, bool i)
 {
 	if (i == 0)
 	{
@@ -174,7 +211,7 @@ int checkFile(std::string line, bool i)
 	return (1);
 }
 
-void parsingInputFile(char **av, std::map <std::string, float> myMap)
+void BitcoinExchange::parsingInputFile(char **av)
 {
 	std::ifstream inputFile(av[1]);
 	if (!inputFile.is_open())
@@ -187,26 +224,4 @@ void parsingInputFile(char **av, std::map <std::string, float> myMap)
 			calcul(line, myMap);
 		i++;
 	}
-}
-
-void setMap(char **av)
-{
-	std::ifstream dataCsv("data.csv");
-	if (!dataCsv.is_open())
-		throw NoFileCsvException();
-	std::string line;
-	std::string date;
-	std::string price;
-	float fprice;
-	std::map <std::string, float> myMap;
-	while (getline(dataCsv, line))
-	{
-		int i = 0;
-		i = line.find(',');
-		date = line.substr(0, i);
-		price = line.substr(i + 1, line.size());
-		fprice = atof(price.c_str());
-		myMap.insert(std::make_pair(date, fprice));
-	}
-	parsingInputFile(av, myMap);
 }

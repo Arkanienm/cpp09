@@ -9,8 +9,8 @@ int main(int ac, char **av)
 	}
 	try
 	{
-		setMap(av);
-		
+		BitcoinExchange bitcoin;
+		bitcoin.setMap(av);
 	}
 	catch(const std::exception& e)
 	{

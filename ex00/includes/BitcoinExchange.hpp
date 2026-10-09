@@ -2,6 +2,7 @@
 #define BITCOINEXCHANGE_HPP
 #include <stdexcept>
 #include <iostream>
+#include <map>
 
 
 class NoFileCsvException : public std::exception
@@ -32,8 +33,14 @@ class BitcoinExchange
 		BitcoinExchange(BitcoinExchange& src);
 		BitcoinExchange& operator=(BitcoinExchange& src);
 		~BitcoinExchange();
-		void setMap();
-}
-void setMap(char **av);
-
+		void setMap(char **av);
+		int checkValue(std::string line);
+		int checkDate(std::string line);
+		void calcul(std::string line);
+		int checkFile(std::string line, bool i);
+		void parsingInputFile(char **av);
+		
+	private:
+		std::map <std::string, float> myMap;
+};
 #endif
