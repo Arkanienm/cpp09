@@ -19,12 +19,13 @@ BitcoinExchange::BitcoinExchange()
 
 BitcoinExchange::~BitcoinExchange()
 {}
-BitcoinExchange& BitcoinExchange::operator=(BitcoinExchange& src)
+BitcoinExchange& BitcoinExchange::operator=(BitcoinExchange const& src)
 {
+	(void)src;
 	return *this;
 }
 
-BitcoinExchange::BitcoinExchange(BitcoinExchange& src)
+BitcoinExchange::BitcoinExchange(BitcoinExchange const& src)
 {
 	*this = src;
 }
@@ -48,7 +49,7 @@ void BitcoinExchange::setMap(char **av)
 		fprice = atof(price.c_str());
 		myMap.insert(std::make_pair(date, fprice));
 	}
-	parsingInputFile(av, myMap);
+	parsingInputFile(av);
 }
 
 int BitcoinExchange::checkValue(std::string line)
@@ -221,7 +222,7 @@ void BitcoinExchange::parsingInputFile(char **av)
 	while (getline(inputFile, line))
 	{
 		if (checkFile(line, i))
-			calcul(line, myMap);
+			calcul(line);
 		i++;
 	}
 }

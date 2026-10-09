@@ -7,9 +7,8 @@ int main(int ac, char **av)
 		std::cerr << "Error" << std::endl;
 		return 0;
 	}
-	std::vector<int> vec;
-	std::deque<int> deq;
-	if (!checkArgs(av, vec, deq))
+	PmergeMe merger;
+	if (!merger.checkArgs(av))
 	{
 		std::cerr << "ERROR WRONG INPUTS" << std::endl;
 		return 0;

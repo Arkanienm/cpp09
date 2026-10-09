@@ -1,6 +1,29 @@
 #include "../includes/PmergeMe.hpp"
 
-int checkArgs(char **av, std::vector<int>& vec, std::deque<int>& deq)
+PmergeMe::PmergeMe()
+{
+}
+PmergeMe::~PmergeMe()
+{}
+
+PmergeMe::PmergeMe(PmergeMe const& src)
+{
+	(void)src;
+}
+
+PmergeMe& PmergeMe::operator=(PmergeMe const& src)
+{
+	(void)src;
+	return *this;
+}
+
+void PmergeMe::merge(char **av)
+{
+	(void)av;
+}
+
+
+int PmergeMe::checkArgs(char **av)
 {
 	size_t i = 1;
 	size_t j = 0;
@@ -50,8 +73,3 @@ int checkArgs(char **av, std::vector<int>& vec, std::deque<int>& deq)
 		return 0;
 	return 1;
 }
-
-// void PmergeMe(char **av)
-// {
-
-// }

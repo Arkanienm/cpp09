@@ -30,8 +30,8 @@ class BitcoinExchange
 {
 	public:
 		BitcoinExchange();
-		BitcoinExchange(BitcoinExchange& src);
-		BitcoinExchange& operator=(BitcoinExchange& src);
+		BitcoinExchange(BitcoinExchange const& src);
+		BitcoinExchange& operator=(BitcoinExchange const& src);
 		~BitcoinExchange();
 		void setMap(char **av);
 		int checkValue(std::string line);

@@ -10,7 +10,20 @@
 #include <limits.h>
 #include <cerrno>
 
-void PmergeMe(char **av);
-int checkArgs(char **av, std::vector<int>& vec, std::deque<int>& deq);
+class PmergeMe
+{
+	public:
+		PmergeMe();
+		PmergeMe(PmergeMe const& src);
+		PmergeMe& operator=(PmergeMe const& src);
+		~PmergeMe();
+		void merge(char **av);
+		int checkArgs(char **av);
+
+	private:
+		std::vector<int> vec;
+		std::deque<int> deq;
+};
+
 
 #endif

@@ -1,8 +1,22 @@
 #include "../includes/RPN.hpp"
 
-void rpn(char **av)
+RPN::RPN()
+{}
+
+RPN::RPN(RPN const& src)
 {
-	std::stack<int> stk;
+	*this = src;
+}
+RPN& RPN::operator=(RPN const& src)
+{
+	(void)src;
+	return *this;
+}
+
+RPN::~RPN()
+{}
+void RPN::rpn(char **av)
+{
 	int result = 0;
 	size_t i = 0;
 	int a;

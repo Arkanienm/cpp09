@@ -7,6 +7,17 @@
 #include <stdlib.h>
 #include <limits.h>
 
-void rpn(char **av);
+class RPN
+{
+	public:
+		RPN();
+		RPN(RPN const& src);
+		RPN& operator=(RPN const& src);	
+		~RPN();
+		void rpn(char **av);
+	private:
+		std::stack<int> stk;
+};
+
 
 #endif
