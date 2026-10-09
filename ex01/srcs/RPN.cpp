@@ -54,6 +54,11 @@ void rpn(char **av)
 				}
 				result = a / b;
 			}
+			if (result < INT_MIN && result > INT_MAX)
+			{
+				std::cerr << "Error" << std::endl;
+				return;
+			}
 			stk.push(result);
 		}
 		else

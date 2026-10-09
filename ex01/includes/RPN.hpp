@@ -5,6 +5,7 @@
 #include <stack>
 #include <string>
 #include <stdlib.h>
+#include <limits.h>
 
 void rpn(char **av);
 

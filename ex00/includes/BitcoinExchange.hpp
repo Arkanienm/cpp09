@@ -25,6 +25,15 @@ class WrongInputFile : public std::exception
 		virtual const char* what() const throw();
 };
 
+class BitcoinExchange
+{
+	public:
+		BitcoinExchange();
+		BitcoinExchange(BitcoinExchange& src);
+		BitcoinExchange& operator=(BitcoinExchange& src);
+		~BitcoinExchange();
+		void setMap();
+}
 void setMap(char **av);
 
 #endif
