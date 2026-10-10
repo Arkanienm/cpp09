@@ -17,12 +17,6 @@ PmergeMe& PmergeMe::operator=(PmergeMe const& src)
 	return *this;
 }
 
-void PmergeMe::merge(char **av)
-{
-	(void)av;
-}
-
-
 int PmergeMe::checkArgs(char **av)
 {
 	size_t i = 1;
@@ -72,4 +66,44 @@ int PmergeMe::checkArgs(char **av)
 	if (!count)
 		return 0;
 	return 1;
+}
+
+void PmergeMe::mergeVector()
+{
+	std::vector<int>::iterator it = vec.begin();
+
+	while (it != vec.end())
+	{
+		if (it + 1 != vec.end())
+		{
+			if (*it > *(it + 1))
+				_pairsVec.push_back(std::make_pair(*it, *(it + 1)));
+			else
+				_pairsVec.push_back(std::make_pair(*(it + 1), *it));
+			it += 2;
+		}
+		else
+		{
+			_straggler = *it;
+			it++;
+		}
+	}
+}
+
+std::vector<std::pair<int, int>> PmergeMe::sortVector(std::vector<std::pair<int, int>> vect)
+{
+	if (vect.size() <= 1)
+		return vect;
+	size_t numOfPairs = vect.size() / 2;
+
+	std::vector<std::pair<int, int>> leftVec(vect.begin(), vect.begin() + numOfPairs);
+	std::vector<std::pair<int, int>> rightVec(vect.begin() + numOfPairs, vect.end());
+	leftVec = sortVector(leftVec);
+	rightVec = sortVector(rightVec);
+
+	std::vector<std::pair<int, int>> mergedVec;
+	std::vector<std::pair<int, int>>::iterator it = leftVec.begin();
+	std::vector<std::pair<int, int>>::iterator jt = rightVec.begin();
+
+	
 }

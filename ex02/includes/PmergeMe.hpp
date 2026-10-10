@@ -17,12 +17,15 @@ class PmergeMe
 		PmergeMe(PmergeMe const& src);
 		PmergeMe& operator=(PmergeMe const& src);
 		~PmergeMe();
-		void merge(char **av);
+		void mergeVector();
+		std::vector<std::pair<int, int>> sortVector(std::vector<std::pair<int, int>> vect);
 		int checkArgs(char **av);
 
 	private:
 		std::vector<int> vec;
 		std::deque<int> deq;
+		std::vector< std::pair<int, int> > _pairsVec;
+		int _straggler;
 };
 
 
