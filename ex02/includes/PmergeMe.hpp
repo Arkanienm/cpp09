@@ -18,6 +18,7 @@ class PmergeMe
 		PmergeMe& operator=(PmergeMe const& src);
 		~PmergeMe();
 		void mergeVector();
+		void fordJohnson(std::vector<std::pair<int, int>> mergedVec);
 		std::vector<std::pair<int, int>> sortVector(std::vector<std::pair<int, int>> vect);
 		int checkArgs(char **av);
 

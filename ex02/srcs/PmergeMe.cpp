@@ -104,6 +104,48 @@ std::vector<std::pair<int, int>> PmergeMe::sortVector(std::vector<std::pair<int,
 	std::vector<std::pair<int, int>> mergedVec;
 	std::vector<std::pair<int, int>>::iterator it = leftVec.begin();
 	std::vector<std::pair<int, int>>::iterator jt = rightVec.begin();
+	while (it != leftVec.end() && jt != rightVec.end())
+	{
+		if (it->first < jt->first)
+		{
+			mergedVec.push_back(*it);
+			it++;
+		}
+		else
+		{
+			mergedVec.push_back(*jt);
+			jt++;
+		}
+	}
+	while (jt != rightVec.end())
+	{
+		mergedVec.push_back(*jt);
+		jt++;
+	}
+	while (it != leftVec.end())
+	{
+		mergedVec.push_back(*it);
+		it++;
+	}
+	return mergedVec;	
+}
 
+void PmergeMe::fordJohnson(std::vector<std::pair<int, int>> mergedVec)
+{
+	if (mergedVec.empty())
+		return ;
+	std::vector<int> mainChain;
+	std::vector<int> pendings;
+	std::vector<std::pair<int, int>>::iterator it = mergedVec.begin();
+	
+	mainChain.push_back(it->second);
+	mainChain.push_back(it->first);
+	it++;
+	while (it != mergedVec.end())
+	{
+		mainChain.push_back(it->first);
+		pendings.push_back(it->second);
+		it++;
+	}
 	
 }
