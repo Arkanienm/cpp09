@@ -149,3 +149,35 @@ void PmergeMe::fordJohnson(std::vector<std::pair<int, int>> mergedVec)
 	}
 	
 }
+
+std::vector<int> PmergeMe::vecJac(std::vector<int>& pendings, int first)
+{
+	std::vector<int>::iterator it = pendings.begin();
+	std::vector<int> endVec;
+	size_t currSize = 1;
+	int curr;
+	endVec.push_back(first);
+	it++;
+	if (it != pendings.end())
+	{
+		endVec.push_back(*it);
+		it += 2;
+	}
+
+	size_t jac = 3;
+	size_t currJac = 3;
+	size_t befJac = 1;
+
+	while (it != pendings.end() && currSize <= pendings.size())
+	{
+		endVec.push_back(*it);
+		while (jac > befJac)
+		{
+			it--;
+			jac--;
+		}
+		it += currJac;
+		currJac += jac;
+	}
+	
+}
