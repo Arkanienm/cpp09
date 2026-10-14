@@ -130,6 +130,22 @@ std::vector<std::pair<int, int>> PmergeMe::sortVector(std::vector<std::pair<int,
 	return mergedVec;	
 }
 
+std::vector<int> PmergeMe::vecJac(int size)
+{
+	std::vector<int> vect;
+	int j = 0;
+	vect.push_back(0);
+	vect.push_back(1);
+	while (j <= size)
+	{
+		j = vect.back() + (2 * *(vec.end() - 2));
+		vect.push_back(j);
+	}
+	if (j > size)
+		vect.push_back(size);
+	return vect;
+}
+
 void PmergeMe::fordJohnson(std::vector<std::pair<int, int>> mergedVec)
 {
 	if (mergedVec.empty())
@@ -147,37 +163,14 @@ void PmergeMe::fordJohnson(std::vector<std::pair<int, int>> mergedVec)
 		pendings.push_back(it->second);
 		it++;
 	}
-	
-}
-
-std::vector<int> PmergeMe::vecJac(std::vector<int>& pendings, int first)
-{
-	std::vector<int>::iterator it = pendings.begin();
-	std::vector<int> endVec;
-	size_t currSize = 1;
-	int curr;
-	endVec.push_back(first);
-	it++;
-	if (it != pendings.end())
+	std::vector<int> indJac = vecJac(pendings.size());
+	std::vector<int>::iterator jt = indJac.begin();
+	int i = *indJac.begin();
+	while (i <= mainChain.size())
 	{
-		endVec.push_back(*it);
-		it += 2;
+		std::vector<int>::iterator t = std::lower_bound(mainChain.begin(), mainChain.end(), i);
+		mainChain.insert(t, *jt);
+		jt++;
+		i = *jt;
 	}
-
-	size_t jac = 3;
-	size_t currJac = 3;
-	size_t befJac = 1;
-
-	while (it != pendings.end() && currSize <= pendings.size())
-	{
-		endVec.push_back(*it);
-		while (jac > befJac)
-		{
-			it--;
-			jac--;
-		}
-		it += currJac;
-		currJac += jac;
-	}
-	
 }

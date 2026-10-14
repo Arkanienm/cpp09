@@ -9,6 +9,7 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <cerrno>
+#include <algorithm>
 
 class PmergeMe
 {
@@ -20,7 +21,7 @@ class PmergeMe
 		void mergeVector();
 		void fordJohnson(std::vector<std::pair<int, int>> mergedVec);
 		std::vector<std::pair<int, int>> sortVector(std::vector<std::pair<int, int>> vect);
-		std::vector<int> vecJac(std::vector<int>& pendings, int first);
+		std::vector<int> vecJac(int size);
 		int checkArgs(char **av);
 
 	private:
