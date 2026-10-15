@@ -1,6 +1,6 @@
 NAME     = PmergeMe
 CXX      = c++
-CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -g3
+CXXFLAGS = -Wall -Wextra -Werror -std=c++98
 
 SRCS_DIR = srcs/
 OBJ_DIR  = .obj/

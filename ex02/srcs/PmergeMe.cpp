@@ -1,6 +1,6 @@
 #include "../includes/PmergeMe.hpp"
 
-PmergeMe::PmergeMe()
+PmergeMe::PmergeMe() : _straggler(-1)
 {
 }
 PmergeMe::~PmergeMe()
@@ -15,6 +15,11 @@ PmergeMe& PmergeMe::operator=(PmergeMe const& src)
 {
 	(void)src;
 	return *this;
+}
+
+std::vector<int> PmergeMe::getVec()
+{
+	return _vec;
 }
 
 int PmergeMe::checkArgs(char **av)
@@ -54,8 +59,8 @@ int PmergeMe::checkArgs(char **av)
 					return 0;
 				else if (num <= 0 || num > INT_MAX)
 					return 0;
-				vec.push_back(static_cast<int>(num));
-				deq.push_back(static_cast<int>(num));
+				_vec.push_back(static_cast<int>(num));
+				_deq.push_back(static_cast<int>(num));
 				nb = "";
 				count++;
 			}
@@ -70,11 +75,12 @@ int PmergeMe::checkArgs(char **av)
 
 void PmergeMe::mergeVector()
 {
-	std::vector<int>::iterator it = vec.begin();
+	_straggler = -1;
+	std::vector<int>::iterator it = _vec.begin();
 
-	while (it != vec.end())
+	while (it != _vec.end())
 	{
-		if (it + 1 != vec.end())
+		if (it + 1 != _vec.end())
 		{
 			if (*it > *(it + 1))
 				_pairsVec.push_back(std::make_pair(*it, *(it + 1)));
@@ -88,22 +94,23 @@ void PmergeMe::mergeVector()
 			it++;
 		}
 	}
+	vecFordJohnson(sortVector(_pairsVec));
 }
 
-std::vector<std::pair<int, int>> PmergeMe::sortVector(std::vector<std::pair<int, int>> vect)
+std::vector<std::pair<int, int> > PmergeMe::sortVector(std::vector<std::pair<int, int> > vect)
 {
 	if (vect.size() <= 1)
 		return vect;
 	size_t numOfPairs = vect.size() / 2;
 
-	std::vector<std::pair<int, int>> leftVec(vect.begin(), vect.begin() + numOfPairs);
-	std::vector<std::pair<int, int>> rightVec(vect.begin() + numOfPairs, vect.end());
+	std::vector<std::pair<int, int> > leftVec(vect.begin(), vect.begin() + numOfPairs);
+	std::vector<std::pair<int, int> > rightVec(vect.begin() + numOfPairs, vect.end());
 	leftVec = sortVector(leftVec);
 	rightVec = sortVector(rightVec);
 
-	std::vector<std::pair<int, int>> mergedVec;
-	std::vector<std::pair<int, int>>::iterator it = leftVec.begin();
-	std::vector<std::pair<int, int>>::iterator jt = rightVec.begin();
+	std::vector<std::pair<int, int> > mergedVec;
+	std::vector<std::pair<int, int> >::iterator it = leftVec.begin();
+	std::vector<std::pair<int, int> >::iterator jt = rightVec.begin();
 	while (it != leftVec.end() && jt != rightVec.end())
 	{
 		if (it->first < jt->first)
@@ -133,26 +140,37 @@ std::vector<std::pair<int, int>> PmergeMe::sortVector(std::vector<std::pair<int,
 std::vector<int> PmergeMe::vecJac(int size)
 {
 	std::vector<int> vect;
-	int j = 0;
+	if (size <= 0)
+		return vect;
+	
 	vect.push_back(0);
-	vect.push_back(1);
-	while (j <= size)
+	if (size > 1)
+		vect.push_back(1);
+	int j_prev = 1;
+	int j_curr = 3;
+
+	while (j_curr < size)
 	{
-		j = vect.back() + (2 * *(vec.end() - 2));
-		vect.push_back(j);
+		vect.push_back(j_curr);
+		int next = j_curr + (2 * j_prev);
+		j_prev = j_curr;
+		j_curr = next;
 	}
-	if (j > size)
-		vect.push_back(size);
+	for (size_t i = size - 1; i >= 1; --i)
+	{
+		if (std::find(vect.begin(), vect.end(), i) == vect.end())
+			vect.push_back(i);
+	}
 	return vect;
 }
 
-void PmergeMe::fordJohnson(std::vector<std::pair<int, int>> mergedVec)
+void PmergeMe::vecFordJohnson(std::vector<std::pair<int, int> > mergedVec)
 {
 	if (mergedVec.empty())
 		return ;
 	std::vector<int> mainChain;
 	std::vector<int> pendings;
-	std::vector<std::pair<int, int>>::iterator it = mergedVec.begin();
+	std::vector<std::pair<int, int> >::iterator it = mergedVec.begin();
 	
 	mainChain.push_back(it->second);
 	mainChain.push_back(it->first);
@@ -164,13 +182,174 @@ void PmergeMe::fordJohnson(std::vector<std::pair<int, int>> mergedVec)
 		it++;
 	}
 	std::vector<int> indJac = vecJac(pendings.size());
-	std::vector<int>::iterator jt = indJac.begin();
-	int i = *indJac.begin();
-	while (i <= mainChain.size())
+	if (!pendings.empty())
 	{
-		std::vector<int>::iterator t = std::lower_bound(mainChain.begin(), mainChain.end(), i);
-		mainChain.insert(t, *jt);
-		jt++;
-		i = *jt;
+		std::vector<int>::iterator jt = indJac.begin();
+		int i = *indJac.begin();
+		int prevJac = i;
+		int currJack = i;
+		while (jt != indJac.end())
+		{
+			std::vector<int>::iterator t = std::lower_bound(mainChain.begin(), mainChain.end(), pendings.at(*jt));
+			mainChain.insert(t, pendings.at(*jt));
+			currJack = *jt;
+			while (currJack > prevJac)
+			{
+				std::vector<int>::iterator t = std::lower_bound(mainChain.begin(), mainChain.end(), pendings.at(currJack));
+				mainChain.insert(t, pendings.at(currJack));
+				currJack--;
+			}
+			prevJac = *jt;
+			jt++;
+			if (jt != indJac.end())
+				i = *jt;
+		}
 	}
+	if (_straggler != -1)
+	{
+		std::vector<int>::iterator t = std::lower_bound(mainChain.begin(), mainChain.end(), _straggler);
+		mainChain.insert(t, _straggler);
+	}
+	_vec = mainChain;
+}
+
+void PmergeMe::mergeDeque()
+{
+	_straggler = -1;
+	std::deque<int>::iterator it = _deq.begin();
+
+	while (it != _deq.end())
+	{
+		if (it + 1 != _deq.end())
+		{
+			if (*it > *(it + 1))
+				_pairsDeq.push_back(std::make_pair(*it, *(it + 1)));
+			else
+				_pairsDeq.push_back(std::make_pair(*(it + 1), *it));
+			it += 2;
+		}
+		else
+		{
+			_straggler = *it;
+			it++;
+		}
+	}
+	deqFordJohnson(sortDeque(_pairsDeq));
+}
+
+std::deque<std::pair<int, int> > PmergeMe::sortDeque(std::deque<std::pair<int, int> > dequ)
+{
+	if (dequ.size() <= 1)
+		return dequ;
+	size_t numOfPairs = dequ.size() / 2;
+
+	std::deque<std::pair<int, int> > leftDeq(dequ.begin(), dequ.begin() + numOfPairs);
+	std::deque<std::pair<int, int> > rightDeq(dequ.begin() + numOfPairs, dequ.end());
+	leftDeq = sortDeque(leftDeq);
+	rightDeq = sortDeque(rightDeq);
+
+	std::deque<std::pair<int, int> > mergedDeq;
+	std::deque<std::pair<int, int> >::iterator it = leftDeq.begin();
+	std::deque<std::pair<int, int> >::iterator jt = rightDeq.begin();
+	while (it != leftDeq.end() && jt != rightDeq.end())
+	{
+		if (it->first < jt->first)
+		{
+			mergedDeq.push_back(*it);
+			it++;
+		}
+		else
+		{
+			mergedDeq.push_back(*jt);
+			jt++;
+		}
+	}
+	while (jt != rightDeq.end())
+	{
+		mergedDeq.push_back(*jt);
+		jt++;
+	}
+	while (it != leftDeq.end())
+	{
+		mergedDeq.push_back(*it);
+		it++;
+	}
+	return mergedDeq;
+}
+
+std::deque<int> PmergeMe::deqJac(int size)
+{
+	std::deque<int> dequ;
+	if (size <= 0)
+		return dequ;
+	
+	dequ.push_back(0);
+	if (size > 1)
+		dequ.push_back(1);
+	int j_prev = 1;
+	int j_curr = 3;
+
+	while (j_curr < size)
+	{
+		dequ.push_back(j_curr);
+		int next = j_curr + (2 * j_prev);
+		j_prev = j_curr;
+		j_curr = next;
+	}
+	for (size_t i = size - 1; i >= 1; --i)
+	{
+		if (std::find(dequ.begin(), dequ.end(), i) == dequ.end())
+			dequ.push_back(i);
+	}
+	return dequ;
+}
+
+
+void PmergeMe::deqFordJohnson(std::deque<std::pair<int, int> > mergedDeq)
+{
+	if (mergedDeq.empty())
+		return ;
+	std::deque<int> mainChain;
+	std::deque<int> pendings;
+	std::deque<std::pair<int, int> >::iterator it = mergedDeq.begin();
+	
+	mainChain.push_back(it->second);
+	mainChain.push_back(it->first);
+	it++;
+	while (it != mergedDeq.end())
+	{
+		mainChain.push_back(it->first);
+		pendings.push_back(it->second);
+		it++;
+	}
+	std::deque<int> indJac = deqJac(pendings.size());
+	if (!pendings.empty())
+	{
+		std::deque<int>::iterator jt = indJac.begin();
+		int i = *indJac.begin();
+		int prevJac = i;
+		int currJack = i;
+		while (jt != indJac.end())
+		{
+			std::deque<int>::iterator t = std::lower_bound(mainChain.begin(), mainChain.end(), pendings.at(*jt));
+			mainChain.insert(t, pendings.at(*jt));
+			currJack = *jt;
+			while (currJack > prevJac)
+			{
+				std::deque<int>::iterator t = std::lower_bound(mainChain.begin(), mainChain.end(), pendings.at(currJack));
+				mainChain.insert(t, pendings.at(currJack));
+				currJack--;
+			}
+			prevJac = *jt;
+			jt++;
+			if (jt != indJac.end())
+				i = *jt;
+		}
+	}
+	if (_straggler != -1)
+	{
+		std::deque<int>::iterator t = std::lower_bound(mainChain.begin(), mainChain.end(), _straggler);
+		mainChain.insert(t, _straggler);
+	}
+	_deq = mainChain;
 }
