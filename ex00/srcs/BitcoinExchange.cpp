@@ -54,6 +54,11 @@ void BitcoinExchange::setMap(char **av)
 
 int BitcoinExchange::checkValue(std::string line)
 {
+	if (line.size() < 14)
+	{
+		std::cout << "Error: empty argument." << std::endl;
+		return (0);
+	}
 	size_t index = line.find('|') + 1;
 	size_t size = line.size() - index - 1;
 	char* endptr;
